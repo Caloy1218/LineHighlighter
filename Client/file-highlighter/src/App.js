@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Container, Typography, Box, Input, LinearProgress } from '@mui/material';
+import { Container, Typography, Box, Input, LinearProgress, Button } from '@mui/material';
+import { SaveAlt as SaveAltIcon } from '@mui/icons-material';
 import './App.css';
 
 const App = () => {
   const [deletedCounts, setDeletedCounts] = useState({ excess: 0, lacking: 0 });
   const [fileName, setFileName] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [downloadEnabled, setDownloadEnabled] = useState(false); // State to manage download button enabled/disabled
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -13,6 +15,7 @@ const App = () => {
 
     setFileName(file.name);
     setUploadProgress(0); // Reset progress when a new file is selected
+    setDownloadEnabled(false); // Disable download button until upload completes
 
     reader.onloadstart = () => {
       setUploadProgress(10); // Initial progress
@@ -27,6 +30,7 @@ const App = () => {
 
     reader.onloadend = (event) => {
       setUploadProgress(100); // Complete progress
+      setDownloadEnabled(true); // Enable download button when upload completes
       const content = event.target.result;
       processFileContent(content);
     };
@@ -82,7 +86,7 @@ const App = () => {
       </Box>
       {uploadProgress > 0 && (
         <Box mt={2}>
-          <Typography variant="body2" color="textSecondary">{`Upload Progress: ${uploadProgress}%`}</Typography>
+          <Typography variant="body2" color="textSecondary">Upload Progress: {uploadProgress}%</Typography>
           <LinearProgress variant="determinate" value={uploadProgress} />
         </Box>
       )}
@@ -91,6 +95,18 @@ const App = () => {
         <Typography variant="body1">Excess Lines: {deletedCounts.excess}</Typography>
         <Typography variant="body1">Lacking Lines: {deletedCounts.lacking}</Typography>
       </Box>
+      {downloadEnabled && (
+        <Box mt={4}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<SaveAltIcon />}
+            onClick={() => createNewFile()} // Optionally handle onClick event for download
+          >
+            Download File
+          </Button>
+        </Box>
+      )}
     </Container>
   );
 };
