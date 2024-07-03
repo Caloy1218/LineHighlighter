@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 
 const App = () => {
-  const [fileContent, setFileContent] = useState('');
-  const [lines, setLines] = useState([]);
   const [highlightedLines, setHighlightedLines] = useState([]);
-  const [showOnlyHighlighted, setShowOnlyHighlighted] = useState(false);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -13,7 +10,6 @@ const App = () => {
 
     reader.onload = (event) => {
       const content = event.target.result;
-      setFileContent(content);
       processFileContent(content);
     };
 
@@ -22,38 +18,26 @@ const App = () => {
 
   const processFileContent = (content) => {
     const linesArray = content.split('\n');
-    setLines(linesArray);
 
     const highlighted = linesArray.map((line, index) => {
-      if (line.length > 80) {
+      if (line.length > 421) {
         return { lineNumber: index + 1, line, type: 'excess' };
-      } else if (line.length < 20) {
+      } else if (line.length < 421) {
         return { lineNumber: index + 1, line, type: 'lacking' };
       } else {
-        return { lineNumber: index + 1, line, type: 'normal' };
+        return null; // Ignore normal lines
       }
-    });
+    }).filter(line => line !== null);
 
     setHighlightedLines(highlighted);
   };
-
-  const toggleHighlightedView = () => {
-    setShowOnlyHighlighted((prev) => !prev);
-  };
-
-  const linesToDisplay = showOnlyHighlighted
-    ? highlightedLines.filter((line) => line.type !== 'normal')
-    : highlightedLines;
 
   return (
     <div className="App">
       <h1>File Highlighter</h1>
       <input type="file" accept=".txt" onChange={handleFileChange} />
-      <button onClick={toggleHighlightedView}>
-        {showOnlyHighlighted ? 'Show All Lines' : 'Show Only Highlighted Lines'}
-      </button>
       <div className="file-content">
-        {linesToDisplay.map(({ lineNumber, line, type }) => (
+        {highlightedLines.map(({ lineNumber, line, type }) => (
           <div
             key={lineNumber}
             className={`line ${type}`}
