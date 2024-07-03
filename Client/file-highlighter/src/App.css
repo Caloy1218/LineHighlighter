@@ -1,0 +1,22 @@
+.App {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+.file-content {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.line {
+  padding: 5px;
+}
+
+.line.excess {
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+.line.lacking {
+  background-color: rgba(0, 0, 255, 0.2);
+}
