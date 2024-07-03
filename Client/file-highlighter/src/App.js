@@ -1,18 +1,32 @@
 import React, { useState } from 'react';
-import { Container, Typography, Button, Box, Input } from '@mui/material';
+import { Container, Typography, Button, Box, Input, LinearProgress } from '@mui/material';
 import './App.css';
 
 const App = () => {
   const [deletedCounts, setDeletedCounts] = useState({ excess: 0, lacking: 0 });
   const [fileName, setFileName] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
 
     setFileName(file.name);
+    setUploadProgress(0); // Reset progress when a new file is selected
 
-    reader.onload = (event) => {
+    reader.onloadstart = () => {
+      setUploadProgress(10); // Initial progress
+    };
+
+    reader.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const progress = Math.round((event.loaded / event.total) * 100);
+        setUploadProgress(progress);
+      }
+    };
+
+    reader.onloadend = (event) => {
+      setUploadProgress(100); // Complete progress
       const content = event.target.result;
       processFileContent(content);
     };
@@ -43,7 +57,7 @@ const App = () => {
   };
 
   const createNewFile = (content) => {
-    const newFileName = fileName.slice(0, -6) + '000000' + fileName.slice(-4);
+    const newFileName = fileName.slice(0, -10) + '000000' + fileName.slice(-4);
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
 
@@ -63,6 +77,12 @@ const App = () => {
       <Box mt={2}>
         <Input type="file" accept=".txt" onChange={handleFileChange} />
       </Box>
+      {uploadProgress > 0 && (
+        <Box mt={2}>
+          <Typography variant="body2" color="textSecondary">{`Upload Progress: ${uploadProgress}%`}</Typography>
+          <LinearProgress variant="determinate" value={uploadProgress} />
+        </Box>
+      )}
       <Box mt={4}>
         <Typography variant="h6">Deleted Line Counts:</Typography>
         <Typography variant="body1">Excess Lines: {deletedCounts.excess}</Typography>

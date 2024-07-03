@@ -1,22 +1,15 @@
 .App {
-  font-family: Arial, sans-serif;
   text-align: center;
   padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
-.file-content {
-  margin-top: 20px;
-  text-align: left;
+.MuiButton-containedPrimary {
+  background-color: #3f51b5;
+  color: white;
 }
 
-.line {
-  padding: 5px;
-}
-
-.line.excess {
-  background-color: rgba(255, 0, 0, 0.2);
-}
-
-.line.lacking {
-  background-color: rgba(0, 0, 255, 0.2);
+.MuiButton-containedSecondary {
+  background-color: #f50057;
+  color: white;
 }
