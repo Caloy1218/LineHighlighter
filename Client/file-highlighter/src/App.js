@@ -8,6 +8,7 @@ const App = () => {
   const [fileName, setFileName] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [downloadEnabled, setDownloadEnabled] = useState(false); // State to manage download button enabled/disabled
+  const [processedContent, setProcessedContent] = useState('');
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -57,14 +58,14 @@ const App = () => {
     setDeletedCounts({ excess: excessCount, lacking: lackingCount });
 
     const newContent = filteredLines.join('\n');
-    createNewFile(newContent);
+    setProcessedContent(newContent); // Store processed content
   };
 
-  const createNewFile = (content) => {
+  const createNewFile = () => {
     const parts = fileName.split('.');
     if (parts.length === 4) {
       const newFileName = `${parts[0]}.${parts[1]}.${parts[2]}.000000`;
-      const blob = new Blob([content], { type: 'text/plain' });
+      const blob = new Blob([processedContent], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
 
       const link = document.createElement('a');
@@ -101,7 +102,7 @@ const App = () => {
             variant="contained"
             color="primary"
             startIcon={<SaveAltIcon />}
-            onClick={() => createNewFile()} // Pass content to createNewFile
+            onClick={createNewFile} // Call createNewFile directly
           >
             Download File
           </Button>
