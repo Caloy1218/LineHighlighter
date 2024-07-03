@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Typography, Button, Box, Input, LinearProgress } from '@mui/material';
+import { Container, Typography, Box, Input, LinearProgress } from '@mui/material';
 import './App.css';
 
 const App = () => {
@@ -57,16 +57,19 @@ const App = () => {
   };
 
   const createNewFile = (content) => {
-    const newFileName = fileName.slice(0, -10) + '000000' + fileName.slice(-4);
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+    const parts = fileName.split('.');
+    if (parts.length === 4) {
+      const newFileName = `${parts[0]}.${parts[1]}.${parts[2]}.000000`;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
 
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = newFileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = newFileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   return (
