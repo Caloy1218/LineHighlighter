@@ -101,7 +101,7 @@ const App = () => {
             variant="contained"
             color="primary"
             startIcon={<SaveAltIcon />}
-            onClick={() => createNewFile()} // Optionally handle onClick event for download
+            onClick={() => createNewFile()} // Pass content to createNewFile
           >
             Download File
           </Button>
