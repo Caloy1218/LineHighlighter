@@ -5,6 +5,7 @@ import './App.css';
 
 const App = () => {
   const [deletedCounts, setDeletedCounts] = useState({ excess: 0, lacking: 0 });
+  const [deletedLines, setDeletedLines] = useState({ excess: [], lacking: [] });
   const [fileName, setFileName] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [downloadEnabled, setDownloadEnabled] = useState(false); // State to manage download button enabled/disabled
@@ -43,19 +44,24 @@ const App = () => {
     const linesArray = content.split('\n');
     let excessCount = 0;
     let lackingCount = 0;
+    const excessLines = [];
+    const lackingLines = [];
 
-    const filteredLines = linesArray.filter((line) => {
+    const filteredLines = linesArray.filter((line, index) => {
       if (line.length > 421) {
         excessCount++;
+        excessLines.push({ line: index + 1, content: line });
         return false;
       } else if (line.length < 421) {
         lackingCount++;
+        lackingLines.push({ line: index + 1, content: line });
         return false;
       }
       return true;
     });
 
     setDeletedCounts({ excess: excessCount, lacking: lackingCount });
+    setDeletedLines({ excess: excessLines, lacking: lackingLines });
 
     const newContent = filteredLines.join('\n');
     setProcessedContent(newContent); // Store processed content
@@ -63,7 +69,7 @@ const App = () => {
 
   const createNewFile = () => {
     const parts = fileName.split('.');
-    if (parts.length === 4) {
+    if (parts.length >= 4) {
       const newFileName = `${parts[0]}.${parts[1]}.${parts[2]}.000000`;
       const blob = new Blob([processedContent], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
@@ -95,6 +101,22 @@ const App = () => {
         <Typography variant="h6">Deleted Line Counts:</Typography>
         <Typography variant="body1">Excess Lines: {deletedCounts.excess}</Typography>
         <Typography variant="body1">Lacking Lines: {deletedCounts.lacking}</Typography>
+      </Box>
+      <Box mt={4}>
+        <Typography variant="h6">Deleted Excess Lines:</Typography>
+        {deletedLines.excess.map((line, index) => (
+          <Typography key={index} variant="body2">
+            Line {line.line}: {line.content}
+          </Typography>
+        ))}
+      </Box>
+      <Box mt={4}>
+        <Typography variant="h6">Deleted Lacking Lines:</Typography>
+        {deletedLines.lacking.map((line, index) => (
+          <Typography key={index} variant="body2">
+            Line {line.line}: {line.content}
+          </Typography>
+        ))}
       </Box>
       {downloadEnabled && (
         <Box mt={4}>
