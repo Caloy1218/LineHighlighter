@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Typography, Box, Input, LinearProgress, Button } from '@mui/material';
+import { Container, Typography, Box, Input, LinearProgress, Button, Paper, Divider } from '@mui/material';
 import { SaveAlt as SaveAltIcon } from '@mui/icons-material';
 import './App.css';
 
@@ -8,7 +8,7 @@ const App = () => {
   const [deletedLines, setDeletedLines] = useState({ excess: [], lacking: [] });
   const [fileName, setFileName] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [downloadEnabled, setDownloadEnabled] = useState(false); // State to manage download button enabled/disabled
+  const [downloadEnabled, setDownloadEnabled] = useState(false);
   const [processedContent, setProcessedContent] = useState('');
 
   const handleFileChange = (e) => {
@@ -16,11 +16,11 @@ const App = () => {
     const reader = new FileReader();
 
     setFileName(file.name);
-    setUploadProgress(0); // Reset progress when a new file is selected
-    setDownloadEnabled(false); // Disable download button until upload completes
+    setUploadProgress(0);
+    setDownloadEnabled(false);
 
     reader.onloadstart = () => {
-      setUploadProgress(10); // Initial progress
+      setUploadProgress(10);
     };
 
     reader.onprogress = (event) => {
@@ -31,8 +31,8 @@ const App = () => {
     };
 
     reader.onloadend = (event) => {
-      setUploadProgress(100); // Complete progress
-      setDownloadEnabled(true); // Enable download button when upload completes
+      setUploadProgress(100);
+      setDownloadEnabled(true);
       const content = event.target.result;
       processFileContent(content);
     };
@@ -64,7 +64,7 @@ const App = () => {
     setDeletedLines({ excess: excessLines, lacking: lackingLines });
 
     const newContent = filteredLines.join('\n');
-    setProcessedContent(newContent); // Store processed content
+    setProcessedContent(newContent);
   };
 
   const createNewFile = () => {
@@ -84,7 +84,7 @@ const App = () => {
   };
 
   return (
-    <Container maxWidth="sm" className="App">
+    <Container maxWidth="md" className="App">
       <Typography variant="h4" component="h1" gutterBottom>
         File Highlighter
       </Typography>
@@ -97,39 +97,47 @@ const App = () => {
           <LinearProgress variant="determinate" value={uploadProgress} />
         </Box>
       )}
-      <Box mt={4}>
-        <Typography variant="h6">Deleted Line Counts:</Typography>
-        <Typography variant="body1">Excess Lines: {deletedCounts.excess}</Typography>
-        <Typography variant="body1">Lacking Lines: {deletedCounts.lacking}</Typography>
-      </Box>
-      <Box mt={4}>
-        <Typography variant="h6">Deleted Excess Lines:</Typography>
-        {deletedLines.excess.map((line, index) => (
-          <Typography key={index} variant="body2">
-            Line {line.line}: {line.content}
-          </Typography>
-        ))}
-      </Box>
-      <Box mt={4}>
-        <Typography variant="h6">Deleted Lacking Lines:</Typography>
-        {deletedLines.lacking.map((line, index) => (
-          <Typography key={index} variant="body2">
-            Line {line.line}: {line.content}
-          </Typography>
-        ))}
-      </Box>
-      {downloadEnabled && (
-        <Box mt={4}>
+      <Box mt={4} display="flex" justifyContent="space-between">
+        <Box width="48%">
+          <Typography variant="h6">Deleted Line Counts:</Typography>
+          <Typography variant="body1">Excess Lines: {deletedCounts.excess}</Typography>
+          <Typography variant="body1">Lacking Lines: {deletedCounts.lacking}</Typography>
+        </Box>
+        {downloadEnabled && (
           <Button
             variant="contained"
             color="primary"
             startIcon={<SaveAltIcon />}
-            onClick={createNewFile} // Call createNewFile directly
+            onClick={createNewFile}
           >
             Download File
           </Button>
+        )}
+      </Box>
+      <Box mt={4} display="flex" justifyContent="space-between">
+        <Box width="48%">
+          <Paper className="paper">
+            <Typography variant="h6" gutterBottom>Deleted Excess Lines:</Typography>
+            <Divider />
+            {deletedLines.excess.map((line, index) => (
+              <Typography key={index} variant="body2" className="line">
+                <b>Line {line.line}:</b> {line.content}
+              </Typography>
+            ))}
+          </Paper>
         </Box>
-      )}
+        <Box width="48%">
+          <Paper className="paper">
+            <Typography variant="h6" gutterBottom>Deleted Lacking Lines:</Typography>
+            <Divider />
+            {deletedLines.lacking.map((line, index) => (
+              <Typography key={index} variant="body2" className="line">
+                <b>Line {line.line}:</b> {line.content}
+              </Typography>
+            ))}
+          </Paper>
+        </Box>
+      </Box>
     </Container>
   );
 };
