@@ -84,7 +84,7 @@ const App = () => {
   };
 
   return (
-    <Container maxWidth="md" className="App">
+    <Container maxWidth="lg" className="App">
       <Typography variant="h4" component="h1" gutterBottom>
         File Highlighter
       </Typography>
@@ -114,29 +114,25 @@ const App = () => {
           </Button>
         )}
       </Box>
-      <Box mt={4} display="flex" justifyContent="space-between">
-        <Box width="48%">
-          <Paper className="paper">
-            <Typography variant="h6" gutterBottom>Deleted Excess Lines:</Typography>
-            <Divider />
-            {deletedLines.excess.map((line, index) => (
-              <Typography key={index} variant="body2" className="line">
-                <b>Line {line.line}:</b> {line.content}
-              </Typography>
-            ))}
-          </Paper>
-        </Box>
-        <Box width="48%">
-          <Paper className="paper">
-            <Typography variant="h6" gutterBottom>Deleted Lacking Lines:</Typography>
-            <Divider />
-            {deletedLines.lacking.map((line, index) => (
-              <Typography key={index} variant="body2" className="line">
-                <b>Line {line.line}:</b> {line.content}
-              </Typography>
-            ))}
-          </Paper>
-        </Box>
+      <Box mt={4} display="flex" flexDirection="column" alignItems="center">
+        <Paper className="paper" style={{ width: '90%' }}>
+          <Typography variant="h6" gutterBottom>Deleted Excess Lines:</Typography>
+          <Divider />
+          {deletedLines.excess.map((line, index) => (
+            <Typography key={index} variant="body2" className="line">
+              <b>Line {line.line}:</b> {line.content}
+            </Typography>
+          ))}
+        </Paper>
+        <Paper className="paper" style={{ width: '90%', marginTop: '20px' }}>
+          <Typography variant="h6" gutterBottom>Deleted Lacking Lines:</Typography>
+          <Divider />
+          {deletedLines.lacking.map((line, index) => (
+            <Typography key={index} variant="body2" className="line">
+              <b>Line {line.line}:</b> {line.content}
+            </Typography>
+          ))}
+        </Paper>
       </Box>
     </Container>
   );
